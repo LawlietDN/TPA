@@ -1,0 +1,57 @@
+{
+  "version": 7,
+
+  "configurePresets": [
+    {
+      "name": "windows-vcpkg",
+      "displayName": "Windows (MSVC) with vcpkg",
+      "generator": "Visual Studio 18 2026",
+      "binaryDir": "build/windows",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "C:/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_TARGET_TRIPLET": "x64-windows",
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_STANDARD": "20"
+      }
+    },
+
+    {
+      "name": "linux",
+      "displayName": "Linux (GCC / System Packages)",
+      "generator": "Unix Makefiles",
+      "binaryDir": "build/linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_STANDARD": "20"
+      }
+    },
+
+    {
+      "name": "macos",
+      "displayName": "macOS (Clang + Homebrew)",
+      "generator": "Unix Makefiles",
+      "binaryDir": "build/macos",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_STANDARD": "20",
+        "OPENSSL_ROOT_DIR": "/opt/homebrew/opt/openssl"
+      }
+    }
+  ],
+
+  "buildPresets": [
+    {
+      "name": "windows-vcpkg",
+      "configurePreset": "windows-vcpkg",
+      "configuration": "Release"
+    },
+    {
+      "name": "linux",
+      "configurePreset": "linux"
+    },
+    {
+      "name": "macos",
+      "configurePreset": "macos"
+    }
+  ]
+}
