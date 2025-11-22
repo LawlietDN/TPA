@@ -10,4 +10,6 @@ class Parser
 {
 public:
     static std::vector<TrainSnapshot> extractSnapshots(std::string const& data, StopManager& stops);
+    static std::unordered_set<std::string> detectTerminals(std::string const& stopTimesPath, StopManager& stops);
+
 };
