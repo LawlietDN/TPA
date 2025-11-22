@@ -7,7 +7,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(Threads REQUIRED)
 find_package(OpenSSL REQUIRED)
-find_package(Boost REQUIRED COMPONENTS system json)
+find_package(Boost REQUIRED COMPONENTS system json headers)
 find_package(Protobuf REQUIRED)
 
 set(PROTO_FILES
@@ -26,8 +26,14 @@ protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_FILES})
 add_executable(transitAnalyzer
     main.cpp
     src/ConfigurationManager.cpp
+    client/MtaClient.cpp 
     ${PROTO_SRCS}
     ${PROTO_HDRS}
+)
+target_compile_definitions(transitAnalyzer PRIVATE
+    BOOST_ASIO_NO_DEPRECATED
+    BOOST_ASIO_NO_TS_EXECUTORS
+    _WIN32_WINNT=0x0A00
 )
 
 target_include_directories(transitAnalyzer PRIVATE
@@ -39,6 +45,7 @@ target_include_directories(transitAnalyzer PRIVATE
 target_link_libraries(transitAnalyzer PRIVATE
     Boost::system
     Boost::json
+    Boost::headers
     OpenSSL::SSL
     OpenSSL::Crypto
     protobuf::libprotobuf
