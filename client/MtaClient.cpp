@@ -42,9 +42,9 @@ boost::asio::awaitable<void> MtaClient::connect(boost::asio::ip::tcp::resolver::
     co_return;
 }
 
-boost::beast::http::request<boost::beast::http::string_body> MtaClient::buildGetRequest() const
+boost::beast::http::request<boost::beast::http::string_body> MtaClient::buildGetRequest(std::string const& target) const
 {
-    boost::beast::http::request<boost::beast::http::string_body> request(boost::beast::http::verb::get, ConfigurationManager::MTA_TARGET, 11);
+    boost::beast::http::request<boost::beast::http::string_body> request(boost::beast::http::verb::get, target, 11);
     request.set(boost::beast::http::field::host, ConfigurationManager::MTA_HOST);
     request.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
     request.set("X-API-Key", this->apiKey);
@@ -68,7 +68,7 @@ boost::asio::awaitable<boost::beast::http::response<boost::beast::http::string_b
 }   
 
 
-boost::asio::awaitable<std::string> MtaClient::fetch()
+boost::asio::awaitable<std::string> MtaClient::fetch(std::string target)
 {
     auto executor = co_await boost::asio::this_coro::executor;
     boost::asio::ip::tcp::resolver resolver(ioContext);
@@ -77,7 +77,7 @@ boost::asio::awaitable<std::string> MtaClient::fetch()
     configureTlsStream(stream);
     boost::asio::ip::tcp::resolver::results_type results =  co_await resolve(resolver, stream);
     co_await connect(results, stream);
-    boost::beast::http::request<boost::beast::http::string_body> request = buildGetRequest();
+    boost::beast::http::request<boost::beast::http::string_body> request = buildGetRequest(target);
     co_await sendRequest(stream, request);
     boost::beast::http::response<boost::beast::http::string_body> response = co_await this-> readResponse(stream);
     co_return response.body();
