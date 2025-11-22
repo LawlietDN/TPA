@@ -53,7 +53,6 @@ boost::beast::http::request<boost::beast::http::string_body> MtaClient::buildGet
 
 }
 
-
 boost::asio::awaitable<void> MtaClient::sendRequest(boost::beast::ssl_stream<boost::beast::tcp_stream>& stream, boost::beast::http::request<boost::beast::http::string_body> const& request)
 {
     co_await boost::beast::http::async_write(stream, request, boost::asio::use_awaitable);
