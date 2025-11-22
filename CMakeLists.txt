@@ -9,6 +9,7 @@ find_package(Threads REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system json headers)
 find_package(Protobuf REQUIRED)
+find_package(SQLite3 REQUIRED)
 
 set(PROTO_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/gtfs-realtime.proto
@@ -26,7 +27,9 @@ protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_FILES})
 add_executable(transitAnalyzer
     main.cpp
     src/ConfigurationManager.cpp
+    src/Parser.cpp
     client/MtaClient.cpp 
+    src/SQLiteStore.cpp     
     ${PROTO_SRCS}
     ${PROTO_HDRS}
 )
@@ -50,6 +53,7 @@ target_link_libraries(transitAnalyzer PRIVATE
     OpenSSL::Crypto
     protobuf::libprotobuf
     Threads::Threads
+    SQLite::SQLite3
 )
 
 message(STATUS "Build configuration complete.")
