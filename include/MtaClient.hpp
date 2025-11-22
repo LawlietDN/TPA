@@ -16,7 +16,7 @@ private:
     void configureTlsStream(boost::beast::ssl_stream<boost::beast::tcp_stream>& stream);
     boost::asio::awaitable<boost::asio::ip::basic_resolver_results<boost::asio::ip::tcp>> resolve(boost::asio::ip::tcp::resolver& resolver, boost::beast::ssl_stream<boost::beast::tcp_stream>& stream);
     boost::asio::awaitable<void> connect(boost::asio::ip::tcp::resolver::results_type results, boost::beast::ssl_stream<boost::beast::tcp_stream>& stream);
-    boost::beast::http::request<boost::beast::http::string_body> buildGetRequest() const;
+    boost::beast::http::request<boost::beast::http::string_body> buildGetRequest(std::string const& target) const;
     boost::asio::awaitable<void> sendRequest(boost::beast::ssl_stream<boost::beast::tcp_stream>& stream, boost::beast::http::request<boost::beast::http::string_body> const& request);
     boost::asio::awaitable<boost::beast::http::response<boost::beast::http::string_body>> readResponse(boost::beast::ssl_stream<boost::beast::tcp_stream>& stream);
     boost::asio::awaitable<void> shutdownStream(boost::beast::ssl_stream<boost::beast::tcp_stream>& stream);
@@ -24,5 +24,5 @@ private:
 
 public:
     MtaClient(boost::asio::io_context& ioc, std::string key);
-    boost::asio::awaitable<std::string> fetch();
+    boost::asio::awaitable<std::string> fetch(std::string target);
 };
