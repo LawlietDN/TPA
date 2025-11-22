@@ -7,9 +7,8 @@ private:
 
 public:
     ConfigurationManager();
-    static constexpr std::string_view MTA_HOST = "api-endpoint.mta.info";
-    static constexpr std::string_view MTA_PORT = "443";
-    static constexpr std::string_view MTA_TARGET = "/Dataservice/mtagtfs.svc/nyct/gtfs-ace";
-    
-    [[nodiscard]] std::string_view getAPIKey() const noexcept;
+    static inline const std::string MTA_HOST   = "api-endpoint.mta.info";
+    static inline const std::string MTA_PORT   = "443";
+    static inline const std::string MTA_TARGET = "/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace";
+    [[nodiscard]] std::string getAPIKey() const noexcept;
 };
