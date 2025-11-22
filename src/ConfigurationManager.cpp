@@ -13,7 +13,7 @@ ConfigurationManager::ConfigurationManager()
 }
 
 
-std::string_view ConfigurationManager::getAPIKey() const noexcept
+std::string ConfigurationManager::getAPIKey() const noexcept
 {
     return apiKey;
 }
