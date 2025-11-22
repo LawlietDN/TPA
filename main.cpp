@@ -7,82 +7,69 @@
 #include "MtaClient.hpp"
 #include "gtfs-realtime.pb.h"
 #include "nyct-subway.pb.h"
+#include "Types.hpp"
+#include "Parser.hpp"
+#include "SQLiteStore.hpp"
+#include "StopManager.hpp"
 
-void parse(std::string& data)
+boost::asio::awaitable<void> runPollingLoop(MtaClient& client, boost::asio::io_context& io, SQLiteStore& store, StopManager& stops, auto const& feeds)
 {
-    if(data.size() > 0 && data[0] == '<')
-    {
-        std::cerr << "WARNING: Response looks like HTML/XML, not Protobuf." << std::endl;
-        std::cout << data << std::endl;
-    }
-    transit_realtime::FeedMessage feed;
-    if (!feed.ParseFromString(data))
-    {
-        std::cerr << "CRITICAL: Failed to parse Protocol Buffer." << std::endl;
-        return;
-    }
+    boost::asio::steady_timer timer(io);
 
-    std::cout << "--------------------------------------------------" << std::endl;
-    std::cout << "SYSTEM TIME: " << feed.header().timestamp() << std::endl;
-    std::cout << "ENTITIES DETECTED: " << feed.entity_size() << std::endl;
-    std::cout << "--------------------------------------------------" << std::endl;
-
-    int count = 0;
-    for (const auto& entity : feed.entity())
+    for (;;)
     {
-        if (count++ >= 5) break;
+        std::cout << "\n[T=" << std::time(nullptr) << "] --- SYSTEM SWEEP START ---" << std::endl;
+        int totalProcessed = 0;
 
-        if (entity.has_trip_update())
+        for (const auto& feed : feeds)
         {
-            const auto& tu = entity.trip_update();
-            std::cout << "[TRIP] ID: " << tu.trip().trip_id() << " | Route: " << tu.trip().route_id() << std::endl;
-            if (tu.trip().HasExtension(transit_realtime::nyct_trip_descriptor))
+            try
             {
-                const auto& ext = tu.trip().GetExtension(transit_realtime::nyct_trip_descriptor);
-
-                std::cout << "Train ID: " << ext.train_id() << '\n';
-                std::cout << "Assigned: " << ext.is_assigned() << '\n';
-                std::cout << "Direction: " << ext.direction() << '\n';
-}
-
+                std::string data = co_await client.fetch(feed.url);
+                std::vector<TrainSnapshot> snapshots = Parser::extractSnapshots(data, stops);
+                if (!snapshots.empty())
+                {
+                    store.insertMany(snapshots);
+                    totalProcessed += snapshots.size();
+                    std::cout << "   | " << feed.name << ": " << snapshots.size() << " trains." << std::endl;
+                }
+                std::cout << "Stored " << snapshots.size() << " snapshots\n";
+            }
+            catch (const std::exception& e)
+            {
+                std::cerr << "Error: " << e.what() << std::endl;
+            }
+            std::cout << "   -> TOTAL: " << totalProcessed << " trains tracked." << std::endl;
+            timer.expires_after(std::chrono::seconds(30));
+            co_await timer.async_wait(boost::asio::use_awaitable);
         }
     }
 }
 
-int main() 
-{
+
+int main()
+{ 
     try
     {
         boost::asio::io_context io;
         ConfigurationManager config;
 
-        std::cout << "Target: " << ConfigurationManager::MTA_PORT << '\n';
-        std::cout << "API Key found." << '\n';
+        StopManager stops("stops.txt");
+        SQLiteStore store("mtaHistory.db");
+
+        std::cout << "API Key found.\n";
 
         MtaClient client(io, config.getAPIKey());
-
-        boost::asio::co_spawn(io, 
-            [&client]() -> boost::asio::awaitable<void>
-            {
-                try {
-                    std::string data = co_await client.fetch();
-                    parse(data);        
+        const auto& feeds = config.getFeeds();
         
-                }
-                catch (std::exception const& e)
-                {
-                    std::cerr << "Async Error: " << e.what() << std::endl;
-                }
-            }, 
-            boost::asio::detached
-        );
-
+        boost::asio::co_spawn(io, runPollingLoop(client, io, store, stops, feeds), boost::asio::detached);
         io.run();
     }
-    catch (std::exception const& e)
+    catch (const std::exception& e)
     {
-        std::cerr << "Main Error: " << e.what() << '\n';
+        std::cerr << "Main Error: " << e.what() << "\n";
         return 1;
     }
+
     return 0;
 }
