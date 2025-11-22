@@ -1,22 +1,28 @@
 #pragma once
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 class StopManager
 {
 private:
-    std::unordered_map<std::string, std::string> stopNames;
+    std::unordered_map<std::string, std::string> parentOf;
+    std::unordered_map<std::string, std::string> stationNames;
+    std::unordered_set<std::string> validStops;
+    std::unordered_set<std::string> terminalStations;
 
 public:
+
     StopManager(std::string const& filepath)
     {
         std::ifstream file(filepath);
         if (!file.is_open())
         {
-            std::cerr << "WARNING: Could not open stops.txt. Station names will be IDs." << std::endl;
+            std::cerr << "ERROR: Could not open stops.txt — StopManager unusable!\n";
             return;
         }
 
@@ -26,35 +32,87 @@ public:
         while (std::getline(file, line))
         {
             if (line.empty()) continue;
-            
+
             std::stringstream ss(line);
-            std::string segment;
-            std::vector<std::string> row;
-            
-            while (std::getline(ss, segment, ','))
-            {
-                row.push_back(segment);
-            }
+            std::string stop_id, stop_name, lat, lon, location_type, parent_station;
 
-            if (row.size() >= 2)
+            std::getline(ss, stop_id, ',');
+            std::getline(ss, stop_name, ',');
+            std::getline(ss, lat, ',');
+            std::getline(ss, lon, ',');
+            std::getline(ss, location_type, ',');
+            std::getline(ss, parent_station, ',');
+
+            validStops.insert(stop_id);
+
+            bool isParent = (!location_type.empty() && location_type == "1");
+
+            if (isParent)
             {
-                std::string id = row[0];
-                std::string name = row[1];
-                stopNames[id] = name;
+                parentOf[stop_id] = stop_id;
+                stationNames[stop_id] = stop_name;
+            }
+            else
+            {
+                if (!parent_station.empty())
+                {
+                    parentOf[stop_id] = parent_station;
+
+                    if (!stationNames.count(parent_station))
+                        stationNames[parent_station] = stop_name;
+                }
+                else
+                {
+                    std::string inferred = stop_id.substr(0, stop_id.size() - 1);
+                    parentOf[stop_id] = inferred;
+                    stationNames[inferred] = stop_name;
+                }
             }
         }
-        std::cout << "Loaded " << stopNames.size() << " stations." << std::endl;
+
+        std::cout << "Loaded " << validStops.size()
+                  << " stops (" << stationNames.size()
+                  << " parent stations)\n";
     }
 
-    std::string getName(std::string const& stopId)
+    bool exists(std::string const& stopId) const
     {
-        if (stopNames.count(stopId)) return stopNames[stopId];
-        if (stopId.length() > 1)
-        {
-            std::string parent = stopId.substr(0, stopId.length() - 1);
-            if (stopNames.count(parent)) return stopNames[parent];
-        }
-
-        return stopId; 
+        return validStops.count(stopId) > 0;
     }
+
+    std::string getParent(std::string const& stopId) const
+    {
+        auto it = parentOf.find(stopId);
+        if (it != parentOf.end())
+            return it->second;
+
+        if (stopId.size() > 1)
+            return stopId.substr(0, stopId.size() - 1);
+
+        return stopId;
+    }
+
+    std::string getName(std::string const& stopId) const
+    {
+        std::string parent = getParent(stopId);
+
+        auto it = stationNames.find(parent);
+        if (it != stationNames.end())
+            return it->second;
+
+        return parent; 
+    }
+
+    
+    bool isTerminal(std::string const& stopId) const
+    {
+    std::string parent = getParent(stopId);
+    return terminalStations.count(parent) > 0;
+    }
+    void loadTerminals(const std::unordered_set<std::string>& terminals)
+    {
+        terminalStations = terminals;
+        std::cout << "Loaded " << terminalStations.size() << " terminal stations.\n";
+    }
+
 };
