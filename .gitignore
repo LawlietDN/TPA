@@ -1,2 +1,4 @@
 build
 .vscode
+-- SQLite.sql
+mtaHistory.db
