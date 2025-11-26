@@ -47,8 +47,8 @@ std::string Dashboard::buildHtmlHead(std::size_t stalledCount)
        << "<meta http-equiv='refresh' content='30'>"
        << "</head><body>";
 
-    ss << "<h1>Live Bottleneck Report</h1>";
-    ss << "<p>System Status: " << stalledCount
+    ss << "<h1>Live Report</h1>";
+    ss << "<p>Status: " << stalledCount
        << " trains holding > 60s.</p>";
 
     return ss.str();
