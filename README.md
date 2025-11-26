@@ -26,9 +26,9 @@ This does **not** rely on the MTA’s `status` field or any declared delays; it 
 
 For example, the MTA may claim a train is “on time,” while TPA shows that, relative to the schedule, it is actually **14 minutes late**. TPA always trusts the observed motion and the schedule, not the advertised delay.
 
-## 1.4. Recording and Replaying Sessions
+## 1.4. Offline Replay(No API Key Required.)
 
-TPA can also **record** the raw realtime feed to a binary file and **replay** it later, driving the **same pipeline and dashboard** as if it were live.
+TPA supports deterministic recording and replaying of data streams. This allows for offline debugging and analysis of specific incidents.
 
 You **do not need an MTA API key** to see the system in action. If you just want to try it without configuring anything, a **pre-recorded session** has been provided. You can replay this data using the `--replay` command:
 
@@ -53,3 +53,38 @@ The thing tho is, this wasn’t due to a parser error on my side. To rule that o
 I eventually found a plausible explanation for why most other lines don’t provide a meaningful delay value. The **L and 7 lines** use **CBTC (Communications-Based Train Control)**, a modern signaling system where the train’s position and timing are known in real time. The rest of the subway system still runs on **fixed-block signaling**, which offers only coarse-grained location and timing data. So I came to the conclusion that because of this, the MTA feed often lacks the information necessary to calculate delay, and defaults to reporting `0` (**once again, this is a conclusion I have made up; that last sentence is NOT confirmed, but the probabilities are high**).
 
 This is one of the reason TPA calculates its own **lateness metric** rather than relying on the feed’s reported delay values. The official numbers are often missing or wrong. Comparing scheduled arrival times from the **static GTFS files** to real-time timestamps gives a more accurate picture of how delayed a train really is.
+
+## 2. Data and Directory Layout
+
+The data/ directory contains static GTFS files. TPA needs stops.txt and stop_times.txt from the MTA’s subway static feed. These are used to resolve station names and compute lateness. Updated feeds can be downloaded from https://www.mta.info/developers
+. Replace the existing files if they go stale.
+
+The proto/ directory holds gtfs-realtime.proto and nyct-subway.proto, used during build time. No changes are needed unless the schema changes upstream.
+
+To reset the local environment, delete any .rec files and mtaHistory.db.
+
+## 3. Technical Stack
+**Language**: C++20 (utilizing Modules and Coroutines)
+**Concurrency**: Boost.Asio (Async I/O)
+**Serialization**: Google Protocol Buffers (gtfs-realtime)
+**Storage**: SQLite3 (WAL mode)
+**Build System**: CMake 3.20+
+
+## 4. Building (Using CMake Presets)
+Windows (MSVC + vcpkg)
+``shell
+cmake --preset windows-vcpkg
+cmake --build --preset windows-vcpkg
+``
+
+Linux
+``bash
+cmake --preset linux
+cmake --build --preset linux
+``
+
+macOS
+``zsh
+cmake --preset macos
+cmake --build --preset macos
+``
