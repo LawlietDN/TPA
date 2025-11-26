@@ -44,7 +44,7 @@ Later, you can replay that same recording offline using the same `--replay` opti
 
 ## 1.5. MTA Reported
 
-I wanna talk about how, while building and testing TPA, a consistent discrepancy was observed in the **reported delay values** across different subway lines.
+I wanna talk about how, while building and testing TPA, a consistent discrepancy was observed in the **reported delay values** across different subway lines.(Something that you will see while using the tool often, especially on the dashboard and the .db file)
 
 When inspecting the **L line**, the delay field in the real-time GTFS data is often populated with actual integers, values like `382`, `506`, or `-135`, meaning there are real deviations from schedule. In contrast, almost every other line (such as **A/C/E, 1/2/3, N/Q/R**) reports a delay of exactly **0**, even in cases where the train is clearly running behind schedule. TPA’s own calculation might show a train arriving **15 minutes late**, but the feed insists it’s “on time.”
 
