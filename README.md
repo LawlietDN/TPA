@@ -79,8 +79,8 @@ cmake --build --preset windows-vcpkg
 
 Linux
 ```bash
-cmake --preset windows-vcpkg
-cmake --build --preset windows-vcpkg
+cmake --preset linux
+cmake --build --preset linux
 ````
 
 macOS
