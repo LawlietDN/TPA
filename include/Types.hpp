@@ -15,6 +15,7 @@ struct TrainSnapshot
     int32_t currentStatus;    // 0=INCOMING, 1=STOPPED_AT, 2=IN_TRANSIT_TO
     int32_t delay = 0;
     int dwellTimeSeconds = 0; 
+    int scheduledArrivalSec = -1;
 
     
 };
