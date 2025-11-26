@@ -84,7 +84,7 @@ cmake --build --preset linux
 ``
 
 macOS
-``zsh
+`zsh
 cmake --preset macos
 cmake --build --preset macos
-``
+`
