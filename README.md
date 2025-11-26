@@ -41,3 +41,15 @@ If you do have an API key and want to gather your own data, you can also **recor
 `--record recordings/my_session.rec`
 
 Later, you can replay that same recording offline using the same `--replay` option and inspect that period in as much detail as you want.
+
+## 1.5. MTA Reported
+
+I wanna talk about how, while building and testing TPA, a consistent discrepancy was observed in the **reported delay values** across different subway lines.
+
+When inspecting the **L line**, the delay field in the real-time GTFS data is often populated with actual integers, values like `382`, `506`, or `-135`, meaning there are real deviations from schedule. In contrast, almost every other line (such as **A/C/E, 1/2/3, N/Q/R**) reports a delay of exactly **0**, even in cases where the train is clearly running behind schedule. TPA’s own calculation might show a train arriving **15 minutes late**, but the feed insists it’s “on time.”
+
+The thing tho is, this wasn’t due to a parser error on my side. To rule that out, I added logging into the protobuf deserialization path and inspected the `stop_time_update` messages directly. The **L line** data consistently includes a populated delay field. Other lines either **omit the field** (which defaults to `0`) or explicitly include a value of `0`.
+
+Tho I came across the reason why most other line's do not provide a delay. The **L and 7 lines** use **CBTC (Communications-Based Train Control)**, a modern signaling system where the train’s position and timing are known in real time. The rest of the subway system still runs on **fixed-block signaling**, which offers only coarse-grained location and timing data. So I came to the conclusion that because of this, the MTA feed often lacks the information necessary to calculate delay, and defaults to reporting `0` (**once again, this is a conclusion I have made up; that last sentence is NOT confirmed, but the probabilities are high**).
+
+This is one of the reason TPA calculates its own **lateness metric** rather than relying on the feed’s reported delay values. The official numbers are often missing or wrong. Comparing scheduled arrival times from the **static GTFS files** to real-time timestamps gives a more accurate picture of how delayed a train really is.
