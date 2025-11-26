@@ -1,6 +1,6 @@
 #include "Parser.hpp"
 #include "StopManager.hpp"
-
+#include <fstream>
 std::vector<TrainSnapshot> Parser::extractSnapshots(std::string const& data, StopManager& stops)
 {
     if (data.empty() || data[0] == '<')
@@ -100,9 +100,10 @@ std::unordered_set<std::string> Parser::detectTerminals(std::string const& stopT
     std::ifstream f(stopTimesPath);
     if (!f.is_open())
     {
-        std::cerr << "Failed to open stop_times.txt\n";
+        std::cerr << "Failed to open " << stopTimesPath << "\n";
         return {};
     }
+
 
     std::string line;
     std::getline(f, line); 
