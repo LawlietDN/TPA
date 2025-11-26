@@ -12,8 +12,8 @@ find_package(Protobuf REQUIRED)
 find_package(SQLite3 REQUIRED)
 
 set(PROTO_FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/gtfs-realtime.proto
-    ${CMAKE_CURRENT_SOURCE_DIR}/nyct-subway.proto
+    ${CMAKE_CURRENT_SOURCE_DIR}/proto/gtfs-realtime.proto
+    ${CMAKE_CURRENT_SOURCE_DIR}/proto/nyct-subway.proto
 )
 
 foreach(PFILE ${PROTO_FILES})
@@ -25,11 +25,15 @@ endforeach()
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_FILES})
 
 add_executable(transitAnalyzer
-    main.cpp
+    src/main.cpp
     src/ConfigurationManager.cpp
     src/Parser.cpp
-    client/MtaClient.cpp 
-    src/SQLiteStore.cpp     
+    src/SQLiteStore.cpp 
+    src/VirtualClock.cpp  
+    src/Dashboard.cpp
+    src/StopManager.cpp
+    src/MtaClient.cpp
+    src/ReplayEngine.cpp
     ${PROTO_SRCS}
     ${PROTO_HDRS}
 )
