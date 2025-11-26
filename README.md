@@ -72,19 +72,19 @@ To reset the local environment, delete any .rec files and mtaHistory.db.
 
 ## 4. Building (Using CMake Presets)
 Windows (MSVC + vcpkg)
-``shell
+```shell
 cmake --preset windows-vcpkg
 cmake --build --preset windows-vcpkg
-``
+```
 
 Linux
-``bash
-cmake --preset linux
-cmake --build --preset linux
-``
+```bash
+cmake --preset windows-vcpkg
+cmake --build --preset windows-vcpkg
+````
 
 macOS
-`zsh
+```zsh
 cmake --preset macos
 cmake --build --preset macos
-`
+```
