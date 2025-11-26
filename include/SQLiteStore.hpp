@@ -21,4 +21,7 @@ public:
     void insertInternal(TrainSnapshot const& s);
     void pruneOldData(int daysToKeep);
     std::vector<TrainSnapshot> getRecentStalls();
+    void importStaticSchedule(std::string const& csvPath);
+    int getScheduledTime(std::string const& tripId, std::string const& stopId);
+
 };
