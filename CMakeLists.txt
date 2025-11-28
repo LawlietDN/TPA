@@ -57,7 +57,6 @@ target_link_libraries(transitAnalyzer PRIVATE
     protobuf::libprotobuf
     Threads::Threads
     SQLite::SQLite3
-    date
     tz
     CURL::libcurl
 )
