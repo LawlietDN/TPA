@@ -110,3 +110,6 @@ macOS
 cmake --preset macos
 cmake --build --preset macos
 ```
+
+This project uses GTFS static data made publicly available by the Metropolitan Transportation Authority (MTA) at [https://new.mta.info/developers](https://new.mta.info/developers). 
+This project is not affiliated with or endorsed by the MTA. 
