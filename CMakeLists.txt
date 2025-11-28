@@ -7,22 +7,20 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(Threads REQUIRED)
 find_package(OpenSSL REQUIRED)
-find_package(Boost REQUIRED COMPONENTS system json headers)
+find_package(Boost REQUIRED COMPONENTS system headers)
 find_package(Protobuf REQUIRED)
 find_package(SQLite3 REQUIRED)
+find_package(CURL REQUIRED)
 
 set(PROTO_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/gtfs-realtime.proto
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/nyct-subway.proto
 )
 
-foreach(PFILE ${PROTO_FILES})
-    if(NOT EXISTS ${PFILE})
-        message(FATAL_ERROR "Missing protocol buffer definition: ${PFILE}")
-    endif()
-endforeach()
-
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_FILES})
+
+add_library(tz STATIC third_party/date/src/tz.cpp)
+target_include_directories(tz PUBLIC third_party/date/include)
 
 add_executable(transitAnalyzer
     src/main.cpp
@@ -37,29 +35,36 @@ add_executable(transitAnalyzer
     ${PROTO_SRCS}
     ${PROTO_HDRS}
 )
+
 target_compile_definitions(transitAnalyzer PRIVATE
     BOOST_ASIO_NO_DEPRECATED
     BOOST_ASIO_NO_TS_EXECUTORS
-    _WIN32_WINNT=0x0A00
+    DATE_MANUAL_TZDB_PATH="${CMAKE_SOURCE_DIR}/third_party/tzdata"
 )
+
+foreach(hdr ${PROTO_HDRS})
+  add_custom_command(
+    TARGET transitAnalyzer PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -DINPUT=${hdr} -DOUTPUT=${hdr} -P ${CMAKE_SOURCE_DIR}/patch_no_data.cmake
+  )
+endforeach()
 
 target_include_directories(transitAnalyzer PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_SOURCE_DIR}/third_party/date/include
 )
 
 target_link_libraries(transitAnalyzer PRIVATE
     Boost::system
-    Boost::json
     Boost::headers
     OpenSSL::SSL
     OpenSSL::Crypto
     protobuf::libprotobuf
     Threads::Threads
     SQLite::SQLite3
+    date::date
+    tz
+    CURL::libcurl
 )
-
-message(STATUS "Build configuration complete.")
-message(STATUS "Protobuf Compiler: ${Protobuf_PROTOC_EXECUTABLE}")
-message(STATUS "OpenSSL Version: ${OPENSSL_VERSION}")
