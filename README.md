@@ -57,11 +57,9 @@ This is one of the reason TPA calculates its own **lateness metric** rather than
 ## 2. Data and Directory Layout
 
 The data/ directory contains static GTFS files. TPA needs stops.txt and stop_times.txt from the MTA’s subway static feed. These are used to resolve station names and compute lateness. Updated feeds can be downloaded from https://www.mta.info/developers
-. Replace the existing files if they go stale.
+. Replace the existing files if they are outdated.
 
 The proto/ directory holds gtfs-realtime.proto and nyct-subway.proto, used during build time. No changes are needed unless the schema changes upstream.
-
-To reset the local environment, delete any .rec files and mtaHistory.db.
 
 ## 3. Technical Stack
 **Language**: C++20 (utilizing Modules and Coroutines)
@@ -70,18 +68,42 @@ To reset the local environment, delete any .rec files and mtaHistory.db.
 **Storage**: SQLite3 (WAL mode)
 **Build System**: CMake 3.20+
 
-## 4. Building (Using CMake Presets)
+## 4. Installation & Build Instructions
 Windows (MSVC + vcpkg)
 ```shell
 cmake --preset windows-vcpkg
 cmake --build --preset windows-vcpkg
 ```
 
-Linux
+### Linux Debian/Ubuntu
+#### Install System Dependencies
+``` bash
+sudo apt-get install build-essential cmake g++ libssl-dev libprotobuf-dev protobuf-compiler libboost-all-dev libsqlite3-dev libcurl4-openssl-dev git
+```
+#### Clone the Repository (with Submodules)
+```bash
+git clone --recurse-submodules https://github.com/LawlietDN/TPA.git
+cd TPA
+```
+If you already cloned without --recurse-submodules, run:
+```bash
+git submodule update --init --recursive
+```
+#### Build the Project
 ```bash
 cmake --preset linux
 cmake --build --preset linux
-````
+```
+#### Make sure to set the MTA API Key
+```bash
+export MTA_API_KEY=key
+```
+
+#### Then run the application
+Make sure to run it from the project root (so data/ paths are correct):
+```bash
+./build/linux/transitAnalyzer
+```
 
 macOS
 ```zsh
