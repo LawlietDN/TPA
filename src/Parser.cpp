@@ -1,6 +1,8 @@
+#include <sstream>
+#include <fstream>
 #include "Parser.hpp"
 #include "StopManager.hpp"
-#include <fstream>
+    
 std::vector<TrainSnapshot> Parser::extractSnapshots(std::string const& data, StopManager& stops)
 {
     if (data.empty() || data[0] == '<')
