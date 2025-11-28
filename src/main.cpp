@@ -11,8 +11,14 @@
 #include <boost/asio/detached.hpp>
 #include "ConfigurationManager.hpp"
 #include "MtaClient.hpp"
+
+//Undefine system NO_DATA macro to avoid conflict with protobuf-generated enum
+#ifdef NO_DATA
+#undef NO_DATA
+#endif
 #include "gtfs-realtime.pb.h"
 #include "nyct-subway.pb.h"
+
 #include "Types.hpp"
 #include "Parser.hpp"
 #include "SQLiteStore.hpp"
