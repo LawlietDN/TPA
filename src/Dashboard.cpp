@@ -1,29 +1,31 @@
-#include "Dashboard.hpp"
 #include <sstream>
 #include <ctime>
-#include <chrono>
+#include <date/tz.h>
 #include "Types.hpp"
 #include "StopManager.hpp"
 #include "VirtualClock.hpp"
+#include "Dashboard.hpp"
 
+using namespace date;
 using namespace std::chrono;
 
 int Dashboard::computeNowSec()
 {
-    std::time_t epochNow = VirtualClock::now();
+    auto epochNow = VirtualClock::now();
     auto now = system_clock::from_time_t(epochNow);
 
-    auto nycZone = std::chrono::locate_zone("America/New_York");
-    std::chrono::zoned_time nycTime(nycZone, now);
+    auto nyc = date::locate_zone("America/New_York");
+    zoned_time nycTime{nyc, now};
+
     auto local = nycTime.get_local_time();
+    auto day = date::floor<date::days>(local);
+    date::hh_mm_ss tod{local - day};
 
-    auto dayPoint = floor<days>(local);
-    hh_mm_ss tod{local - dayPoint};
-
-    return static_cast<int>(tod.hours().count() * 3600
-                          + tod.minutes().count() * 60
-                          + tod.seconds().count());
+    return tod.hours().count() * 3600
+         + tod.minutes().count() * 60
+         + tod.seconds().count();
 }
+
 
 std::string Dashboard::buildHtmlHead(std::size_t stalledCount)
 {
