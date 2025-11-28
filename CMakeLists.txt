@@ -42,13 +42,6 @@ target_compile_definitions(transitAnalyzer PRIVATE
     DATE_MANUAL_TZDB_PATH="${CMAKE_SOURCE_DIR}/third_party/tzdata"
 )
 
-foreach(hdr ${PROTO_HDRS})
-  add_custom_command(
-    TARGET transitAnalyzer PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -DINPUT=${hdr} -DOUTPUT=${hdr} -P ${CMAKE_SOURCE_DIR}/patch_no_data.cmake
-  )
-endforeach()
-
 target_include_directories(transitAnalyzer PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/include
