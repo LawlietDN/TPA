@@ -68,14 +68,14 @@ The proto/ directory holds gtfs-realtime.proto and nyct-subway.proto, used durin
 **Storage**: SQLite3 (WAL mode)
 **Build System**: CMake 3.20+
 
-## 4. Installation & Build Instructions
+# 4. Installation & Build Instructions
 
-### Linux Debian/Ubuntu
-#### Install System Dependencies
+## Linux Debian/Ubuntu
+### Install System Dependencies
 ``` bash
 sudo apt-get install build-essential cmake g++ libssl-dev libprotobuf-dev protobuf-compiler libboost-all-dev libsqlite3-dev libcurl4-openssl-dev git
 ```
-#### Clone the Repository (with Submodules)
+### Clone the Repository (with Submodules)
 ```bash
 git clone --recurse-submodules https://github.com/LawlietDN/TPA.git
 cd TPA
@@ -84,23 +84,24 @@ If you already cloned without --recurse-submodules, run:
 ```bash
 git submodule update --init --recursive
 ```
-#### Build the Project
+### Build the Project
 ```bash
 cmake --preset linux
 cmake --build --preset linux
 ```
-#### Make sure to set the MTA API Key
+### Make sure to set the MTA API Key
 ```bash
 export MTA_API_KEY=key
 ```
 
-#### Run
+### Run
 Run it from the project root (so data/ paths are correct):
 ```bash
 ./build/linux/transitAnalyzer
 ```
 
-#### Windows (MSVC Build Tools + vcpkg)
+
+## Windows (MSVC Build Tools + vcpkg)
 
 ```powershell
 # 1. Install dependencies
@@ -109,7 +110,7 @@ C:\vcpkg\vcpkg integrate install
 ```
 
 
-#### 2. Clone the repo
+### 2. Clone the repo
 ```powershell
 git clone --recurse-submodules https://github.com/LawlietDN/TPA.git
 cd TPA
@@ -119,21 +120,21 @@ If you already cloned without --recurse-submodules, run:
 git submodule update --init --recursive
 ```
 
-#### 3. Configure the project
+### 3. Configure the project
 ```powershell
 cmake --preset windows-vcpkg
 ```
 
-#### 4. Build
+### 4. Build
 ```powershell
 cmake --build --preset windows-vcpkg
 ````
-#### 5. Set API key
+### 5. Set API key
 ```powershell
 $env:MTA_API_KEY="key"
 ````
 
-#### 6. Run
+### 6. Run
 Run it from the project root (so data/ paths are correct):
 ```powershell
 .\build\windows\Release\transitAnalyzer.exe
