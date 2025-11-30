@@ -103,14 +103,14 @@ Run it from the project root (so data/ paths are correct):
 
 ## Windows (MSVC Build Tools + vcpkg)
 
+### Install dependencies
 ```powershell
-# 1. Install dependencies
-C:\vcpkg\vcpkg install boost-system boost-headers openssl protobuf sqlite3 curl
-C:\vcpkg\vcpkg integrate install
+vcpkg install boost-system boost-headers openssl protobuf sqlite3 curl
+vcpkg integrate install
 ```
 
 
-### 2. Clone the repo
+### Clone the repo
 ```powershell
 git clone --recurse-submodules https://github.com/LawlietDN/TPA.git
 cd TPA
@@ -120,21 +120,21 @@ If you already cloned without --recurse-submodules, run:
 git submodule update --init --recursive
 ```
 
-### 3. Configure the project
+### Configure the project
 ```powershell
 cmake --preset windows-vcpkg
 ```
 
-### 4. Build
+### Build
 ```powershell
 cmake --build --preset windows-vcpkg
 ````
-### 5. Set API key
+### Set API key
 ```powershell
 $env:MTA_API_KEY="key"
 ````
 
-### 6. Run
+### Run
 Run it from the project root (so data/ paths are correct):
 ```powershell
 .\build\windows\Release\transitAnalyzer.exe
