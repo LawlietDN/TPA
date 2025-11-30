@@ -69,11 +69,6 @@ The proto/ directory holds gtfs-realtime.proto and nyct-subway.proto, used durin
 **Build System**: CMake 3.20+
 
 ## 4. Installation & Build Instructions
-Windows (MSVC + vcpkg)
-```shell
-cmake --preset windows-vcpkg
-cmake --build --preset windows-vcpkg
-```
 
 ### Linux Debian/Ubuntu
 #### Install System Dependencies
@@ -99,17 +94,51 @@ cmake --build --preset linux
 export MTA_API_KEY=key
 ```
 
-#### Then run the application
-Make sure to run it from the project root (so data/ paths are correct):
+#### Run
+Run it from the project root (so data/ paths are correct):
 ```bash
 ./build/linux/transitAnalyzer
 ```
 
-macOS
-```zsh
-cmake --preset macos
-cmake --build --preset macos
+#### Windows (MSVC Build Tools + vcpkg)
+
+```powershell
+# 1. Install dependencies
+C:\vcpkg\vcpkg install boost-system boost-headers openssl protobuf sqlite3 curl
+C:\vcpkg\vcpkg integrate install
 ```
+
+
+#### 2. Clone the repo
+```powershell
+git clone --recurse-submodules https://github.com/LawlietDN/TPA.git
+cd TPA
+````
+If you already cloned without --recurse-submodules, run:
+```powershell
+git submodule update --init --recursive
+```
+
+#### 3. Configure the project
+```powershell
+cmake --preset windows-vcpkg
+```
+
+#### 4. Build
+```powershell
+cmake --build --preset windows-vcpkg
+````
+#### 5. Set API key
+```powershell
+$env:MTA_API_KEY="key"
+````
+
+#### 6. Run
+Run it from the project root (so data/ paths are correct):
+```powershell
+.\build\windows\Release\transitAnalyzer.exe
+```
+
 
 This project uses GTFS static data made publicly available by the Metropolitan Transportation Authority (MTA) at [https://new.mta.info/developers](https://new.mta.info/developers). 
 This project is not affiliated with or endorsed by the MTA. 
