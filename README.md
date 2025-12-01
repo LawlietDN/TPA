@@ -137,10 +137,10 @@ During development and real-world testing of TPA, a **consistent discrepancy** w
 - **L and 7 lines:**  
   The delay field is usually populated with real, non-zero values (like `382`, `-135`, etc.).
 - **Other lines (A/C/E, 1/2/3, N/Q/R, etc.):**  
-  Almost always report a delay of exactly `0`—even when trains are clearly behind schedule.  
+  Almost always report a delay of exactly `0`, even when trains are clearly behind schedule.  
   TPA often shows a train **15 minutes late** while the feed claims “on time.”
 
-This is **not a bug in TPA**—it’s due to how the MTA provides and structures its GTFS-Realtime data. According to MTA developer support and official guidance:
+This is due to how the MTA provides and structures its GTFS-Realtime data. According to MTA developer support and official guidance:
 
 > “NYCT's GTFS-RT feed operates slightly differently than the spec. The trips specified in the feed are intended to replace the base schedule for the duration specified in tripReplacementPeriod. The trips are not to be matched by consumers against the static GTFS. This is due to the complexity and number of internal schedule revisions that are implemented every day.
 >
