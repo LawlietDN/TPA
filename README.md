@@ -147,7 +147,7 @@ During development and real-world testing of TPA, a **consistent discrepancy** w
 Below, you can see an example from the TPA dashboard:  
 **Only the L line shows nonzero delay, while all other lines report 0, even when behind schedule.**
 ![L Line delay field populated, others zero](docs/img/l_line_vs_others.webp)
-Notice the L line (row with "L" at left) shows a nonzero delay, but other lines like A, D, N, etc., all show `0` delay, even when late.*
+*Notice the L line (row with "L" at left) shows a nonzero delay, but other lines like A, D, N, etc., all show `0` delay, even when late.*
 
 
 This is due to how the MTA provides and structures its GTFS-Realtime data. According to MTA developer support and official guidance:
