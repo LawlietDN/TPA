@@ -1,7 +1,7 @@
 # Transit Performance Analytics (TPA) – NYC Subway
 
 **A tool for analyzing actual train movement in the NYC subway using raw GTFS-Realtime data.**  
-TPA shows *true* dwell time and lateness, ignoring official MTA delay claims and reconstructing real train performance—down to the second.
+TPA shows *true* dwell time and lateness, ignoring official MTA delay claims and reconstructing real train performance independently.
 
 ---
 
@@ -39,7 +39,7 @@ TPA shows *true* dwell time and lateness, ignoring official MTA delay claims and
 
 ## Features
 
-- Analyzes *actual* subway motion from MTA’s GTFS-Realtime feed—makes no assumptions about official “delay” reporting
+- Analyzes *actual* subway motion from MTA’s GTFS-Realtime feed, makes no assumptions about official “delay” reporting
 - Computes **physical dwell time** (actual time a train spends at a station) and **true lateness** (difference between observed and scheduled arrivals)
 - Deterministic, replayable sessions (no API key needed for demo)
 - Fully local; uses SQLite to maintain a rolling history for 7 days
@@ -146,7 +146,7 @@ This is due to how the MTA provides and structures its GTFS-Realtime data. Accor
 >
 > The time fields in the feed represent the expected arrival time of that trip at that station, taking into account its last reported position and any schedule deviation.”
 >
-> — MTA Developer Resources ([source](https://groups.google.com/g/mtadeveloperresources/c/qxQq5LhzYwE/m/Ix2DEKTQAgAJ))
+>  MTA Developer Resources ([source](https://groups.google.com/g/mtadeveloperresources/c/qxQq5LhzYwE/m/Ix2DEKTQAgAJ))
 
 
 - The **L and 7 lines** use **CBTC (Communications-Based Train Control)**, which allows for precise delay calculation.
