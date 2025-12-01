@@ -4,6 +4,10 @@
 TPA shows *true* dwell time and lateness, ignoring official MTA delay claims and reconstructing real train performance independently.
 
 ---
+Below is a live TPA dashboard showing real-time train holds, dwell times, true lateness, and official MTA “reported delay” fields.*
+![TPA Dashboard Overview](docs/img/dashboard_overview.webp)
+
+---
 
 ## Table of Contents
 
