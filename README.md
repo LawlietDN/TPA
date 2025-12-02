@@ -1,4 +1,4 @@
-# Transit Performance Analytics (TPA) – NYC Subway
+# Transit Performance Analytics (TPA) NYC Subway
 
 **A tool for analyzing actual train movement in the NYC subway using raw GTFS-Realtime data.**  
 TPA shows *true* dwell time and lateness, ignoring official MTA delay claims and reconstructing real train performance independently.
@@ -46,7 +46,7 @@ Below is a live TPA dashboard showing real-time train holds, dwell times, true l
 - Analyzes *actual* subway motion from MTA’s GTFS-Realtime feed, makes no assumptions about official “delay” reporting
 - Computes **physical dwell time** (actual time a train spends at a station) and **true lateness** (difference between observed and scheduled arrivals)
 - Deterministic, replayable sessions (no API key needed for demo)
-- Fully local; uses SQLite to maintain a rolling history for 7 days
+- Fully local, uses SQLite to maintain a rolling history for 7 days
 
 ---
 
@@ -60,7 +60,7 @@ git clone --recurse-submodules https://github.com/LawlietDN/TPA.git
 cd TPA
 cmake --preset linux
 cmake --build --preset linux
-export MTA_API_KEY=your_key_here
+export MTA_API_KEY=apokey
 ./build/linux/transitAnalyzer
 ```
 
@@ -72,23 +72,23 @@ git clone --recurse-submodules https://github.com/LawlietDN/TPA.git
 cd TPA
 cmake --preset windows-vcpkg
 cmake --build --preset windows-vcpkg
-$env:MTA_API_KEY="your_key_here"
+$env:MTA_API_KEY="apikey"
 .\build\windows\Release\transitAnalyzer.exe
 ```
 
 
 
-## How TPA Works
+## How everything Works
 
-### What TPA Is
+### What is this exactly
 
 This is **TPA**, a tool for analyzing **actual subway movement in New York City**. Unlike typical transit apps that simply display scheduled arrivals and delays reported by the MTA, TPA makes **no assumptions** about the accuracy or honesty of those figures. It works by **analyzing the raw telemetry** and inferring actual train movement.
 
-The project is written in **C++20** and structured as a **multi-threaded daemon**. It fetches raw binary protobufs from the MTA’s **GTFS-Realtime** endpoints over HTTPS. Every 30 seconds, it concurrently hits eight different endpoints (such as **A/C/E**, **1/2/3**, **N/Q/R**, etc.).
+The project is written in **C++20.** It fetches raw binary protobufs from the MTA’s **GTFS-Realtime** endpoints over HTTPS. Every 30 seconds, it concurrently hits eight different endpoints (such as **A/C/E**, **1/2/3**, **N/Q/R**, etc.).
 
 ---
 
-### How TPA Treats the MTA Feed
+### How Does It Treat the MTA Feed
 
 The MTA’s real-time feed is **stateless**. Each snapshot is a moment in time, with no awareness of what came before. TPA imposes structure onto that by **keeping a running history**. It merges `VehiclePosition` and `TripUpdate` messages into unified train snapshots and stores these in a **SQLite database**, in-memory but backed on disk. Every hour, a cleanup job trims old data beyond a **seven-day window**.
 
@@ -112,7 +112,7 @@ For example, the MTA may claim a train is “on time,” while TPA shows that, r
 
 ### Offline Replay (No API Key Required)
 
-TPA supports deterministic recording and replaying of data streams. This allows for offline debugging and analysis of specific incidents.
+TPA supports deterministic recording and replaying of data streams. So it could also be used for offline debugging and analysis of specific incidents.
 
 You **do not need an MTA API key** to see TPA in action. If you just want to try it without configuring anything, a **pre-recorded session** has been provided. You can replay this data using the `--replay` command:
 
@@ -136,7 +136,7 @@ The proto/ directory holds gtfs-realtime.proto and nyct-subway.proto, used durin
 
 ## The Problem With Official Delay Reporting
 
-During development and real-world testing of TPA, a **consistent discrepancy** was observed in the `delay` field reported across subway lines:
+A **consistent discrepancy** was observed in the `delay` field reported across subway lines:
 
 - **L and 7 lines:**  
   The delay field is usually populated with real, non-zero values (like `382`, `-135`, etc.).
