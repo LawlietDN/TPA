@@ -37,7 +37,6 @@ Below is a live TPA dashboard showing real-time train holds, dwell times, true l
     ```bash
     path/transitAnalyzer --replay recordings/session.rec
     ```
-3. For live data see [Installation & Build Instructions](#installation--build-instructions) below.
 
 ---
 
