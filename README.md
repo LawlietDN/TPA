@@ -30,12 +30,12 @@ Below is a live TPA dashboard showing real-time train holds, dwell times, true l
 
 1. **Clone the repository:**
     ```bash
-    git clone --recurse-submodules https://github.com/LawlietDN/TPA.git
-    cd TPA
+    $ git clone --recurse-submodules https://github.com/LawlietDN/TPA.git
+    $ cd TPA
     ```
 2. **Run a pre-recorded session (offline replay):**
     ```bash
-    path/transitAnalyzer --replay recordings/session.rec
+   $ path/transitAnalyzer --replay recordings/session.rec
     ```
 
 ---
@@ -54,25 +54,25 @@ Below is a live TPA dashboard showing real-time train holds, dwell times, true l
 ### Linux Debian/Ubuntu
 
 ```bash
-sudo apt-get install build-essential cmake g++ libssl-dev libprotobuf-dev protobuf-compiler libboost-all-dev libsqlite3-dev libcurl4-openssl-dev git
-git clone --recurse-submodules https://github.com/LawlietDN/TPA.git
-cd TPA
-cmake --preset linux
-cmake --build --preset linux
-export MTA_API_KEY=apokey
-./build/linux/transitAnalyzer
+$ sudo apt-get install build-essential cmake g++ libssl-dev libprotobuf-dev protobuf-compiler libboost-all-dev libsqlite3-dev libcurl4-openssl-dev git
+$ git clone --recurse-submodules https://github.com/LawlietDN/TPA.git
+$ cd TPA
+$ cmake --preset linux
+$ cmake --build --preset linux
+$ export MTA_API_KEY=apokey
+$ ./build/linux/transitAnalyzer
 ```
 
 ### Windows (MSVC Build Tools + vcpkg)
 ```powershell
-vcpkg install boost-system boost-headers openssl protobuf sqlite3 curl
-vcpkg integrate install
-git clone --recurse-submodules https://github.com/LawlietDN/TPA.git
-cd TPA
-cmake --preset windows-vcpkg
-cmake --build --preset windows-vcpkg
-$env:MTA_API_KEY="apikey"
-.\build\windows\Release\transitAnalyzer.exe
+$ vcpkg install boost-system boost-headers openssl protobuf sqlite3 curl
+$ vcpkg integrate install
+$ git clone --recurse-submodules https://github.com/LawlietDN/TPA.git
+$ cd TPA
+$ cmake --preset windows-vcpkg
+$ cmake --build --preset windows-vcpkg
+$ $env:MTA_API_KEY="apikey"
+$ .\build\windows\Release\transitAnalyzer.exe
 ```
 
 
@@ -116,13 +116,13 @@ TPA supports deterministic recording and replaying of data streams. So it could 
 You **do not need an MTA API key** to see TPA in action. If you just want to try it without configuring anything, a **pre-recorded session** has been provided. You can replay this data using the `--replay` command:
 
 ```bash
---replay recordings/session.rec
+$ --replay recordings/session.rec
 ``` 
 This runs the full pipeline, parsing GTFS-Realtime data, populating the database, and serving the dashboard exactly as if it were processing live data from the MTA.
 
 If you do have an API key and want to gather your own data, you can also record a session:
 ```bash
---record recordings/my_session.rec
+$ --record recordings/my_session.rec
 ```
 Later, you can replay that same recording offline using the same --replay option and inspect that period in as much detail as you want.
 
